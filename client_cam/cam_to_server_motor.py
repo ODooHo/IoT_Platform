@@ -9,19 +9,17 @@ from urllib.parse import unquote_plus
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('testimg6.jpeg')
-
+img_ori = cv2.imread('pjimg2.jpeg')
 
 height, width, channel = img_ori.shape
 plt.figure(figsize=(12, 10))
-plt.imshow(img_ori,cmap='gray')
+plt.imshow(img_ori, cmap='gray')
 print(height, width, channel)
-
 
 print(height, width, channel)
 
 gray = cv2.cvtColor(img_ori, cv2.COLOR_BGR2GRAY)
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(12, 10))
 plt.imshow(gray, cmap='gray')
 
 plt.show()
@@ -44,15 +42,13 @@ img_thresh = cv2.adaptiveThreshold(
     C=9
 )
 
-plt.figure(figsize=(20,20))
-plt.subplot(1,2,1)
+plt.figure(figsize=(20, 20))
+plt.subplot(1, 2, 1)
 plt.title('Threshold only')
 plt.imshow(img_thresh, cmap='gray')
-plt.subplot(1,2,2)
+plt.subplot(1, 2, 2)
 plt.title('Blur and Threshold')
 plt.imshow(img_blur_thresh, cmap='gray')
-
-
 
 contours, _ = cv2.findContours(
     img_blur_thresh,
@@ -62,10 +58,9 @@ contours, _ = cv2.findContours(
 
 temp_result = np.zeros((height, width, channel), dtype=np.uint8)
 
-cv2.drawContours(temp_result, contours=contours, contourIdx=-1, color=(255,255,255))
+cv2.drawContours(temp_result, contours=contours, contourIdx=-1, color=(255, 255, 255))
 plt.figure(figsize=(12, 10))
 plt.imshow(temp_result)
-
 
 temp_result = np.zeros((height, width, channel), dtype=np.uint8)
 
@@ -84,9 +79,8 @@ for contour in contours:
         'cx': x + (w / 2),
         'cy': y + (h / 2)
     })
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(12, 10))
 plt.imshow(temp_result, cmap='gray')
-
 
 MIN_AREA = 80
 MIN_WIDTH, MIN_HEIGHT = 2, 8
@@ -310,7 +304,8 @@ print(chars)
 
 img_out = img_ori.copy()
 
-cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
+cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x'] + info['w'], info['y'] + info['h']),
+              color=(255, 0, 0), thickness=2)
 
 cv2.imwrite(chars + '.jpg', img_out)
 
@@ -318,26 +313,81 @@ plt.figure(figsize=(12, 10))
 plt.imshow(img_out)
 plt.show()
 
+num_list = []
+name = []
+# uncomment one of three .url statements below
+# 1. retrieve latest three cins
+url = 'http://203.253.128.177:7579/Mobius/sch_platform_4_/number?fu=2&la=5&ty=3&rcn=4'
 
-url = 'http://203.253.128.177:7579/Mobius/sch_platform_4_/number'
-headers =	{
-				'Accept':'application/json',
-				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4_', # change to your aei
-				'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-			}
-a = quote_plus(result_chars)
-print(a)
-data =	{
-			"m2m:cnt": {
-				"rn": a
-			}
-		}
+# 2. retrieve three cins created after ct=20210512T100525
+# url = 'http://203.253.128.161:7579/Mobius/sch19999999/dust?fu=2&lim=3&ty=4&rcn=4' \
+# 		+ '&cra=20210512T100525'
 
-r = requests.post(url, headers=headers, json=data)
+# 3. retrieve three cins created after ct=20210512T100525 and before ct=20210512T100540
+# url = 'http://203.253.128.161:7579/Mobius/sch19999999/dust?fu=2&lim=3&ty=4&rcn=4' \
+# 		+ '&cra=20210512T100525&crb=20210512T100540"'
+
+headers = {'Accept': 'application/json',
+           'X-M2M-RI': '12345',
+           'X-M2M-Origin': 'SOrigin'}
+
+r = requests.get(url, headers=headers)
 
 try:
-	r.raise_for_status()
-	print(r)
+    r.raise_for_status()
+    jr = r.json()
+
+    for c in jr['m2m:rsp']['m2m:cnt']:
+        num_list.append(c['rn'])
+        print(c['rn'])
 except Exception as exc:
-	print('There was a problem: %s' % (exc))
+    print('There was a problem: %s' % (exc))
+
+url = 'http://203.253.128.177:7579/Mobius/sch_platform_4_/number?fu=2&la=1&ty=3&rcn=4'
+headers = {'Accept': 'application/json',
+           'X-M2M-RI': '12345',
+           'X-M2M-Origin': 'SOrigin'}
+
+r = requests.get(url, headers=headers)
+try:
+    r.raise_for_status()
+    jr = r.json()
+    for c in jr['m2m:rsp']['m2m:cnt']:
+        name = c['rn']
+except Exception as exc:
+    print('There was a problem: %s' % (exc))
+flag = False
+for i in range(len(num_list)):
+    if num_list[i] == name:
+        flag = True
+        break
+    else:
+        continue
+
+url = ('http://203.253.128.177:7579/Mobius/sch_platform_4_/motor')
+headers = {
+    'Accept': 'application/json',
+    'X-M2M-RI': '12345',
+    'X-M2M-Origin': 'Ssch_platform_4_',  # change to your aei
+    'Content-Type': 'application/vnd.onem2m-res+json; ty=4'
+}
+if flag:
+    data = {
+        "m2m:cin": {
+            "con": "1"
+        }
+    }
+else:
+    data = {
+        "m2m:cin": {
+            "con": "0"
+        }
+    }
+
+r = requests.post(url, headers=headers, json=data)
+try:
+    r.raise_for_status()
+    print(r)
+except Exception as exc:
+    print('There was a problem: %s' % (exc))
+
