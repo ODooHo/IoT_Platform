@@ -27,7 +27,7 @@ GPIO.setup(A_GREEN, GPIO.OUT)
 ACNT = False
 
 def register_A(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A'
+    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/A'
     headers =	{'Accept':'application/json',
     'X-M2M-RI':'12345',
     'X-M2M-Origin':'Ssch_platform_4', # change to your aei
@@ -49,7 +49,7 @@ def register_A(car):
 	    print('There was a problem: %s' % (exc))
 
 def register_B(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B'
+    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/B'
     headers =	{'Accept':'application/json',
     'X-M2M-RI':'12345',
     'X-M2M-Origin':'Ssch_platform_4', # change to your aei
@@ -71,7 +71,7 @@ def register_B(car):
 	    print('There was a problem: %s' % (exc))
 
 def register_H(car):
-    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap'
+    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap'
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -94,7 +94,7 @@ def register_H(car):
 	    print('There was a problem: %s' % (exc))
 
 def delete_car_A(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/A/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -106,7 +106,7 @@ def delete_car_A(car):
     response = requests.request("DELETE", url, headers=headers, data=payload)
 
 def delete_car_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/B/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -118,7 +118,7 @@ def delete_car_B(car):
     response = requests.request("DELETE", url, headers=headers, data=payload)
 
 def delete_car_H(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
