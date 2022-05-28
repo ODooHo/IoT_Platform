@@ -9,12 +9,12 @@ from urllib.parse import unquote_plus
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('pjimg3.jpeg')
+img_ori = cv2.imread('1.jpeg')
 
 
 height, width, channel = img_ori.shape
 plt.figure(figsize=(12, 10))
-plt.imshow(img_ori,cmap='gray')
+plt.imshow(img_ori,cmap='gray') 
 print(height, width, channel)
 
 
@@ -319,11 +319,11 @@ plt.imshow(img_out)
 plt.show()
 
 
-url = 'http://203.253.128.177:7579/Mobius/sch_platform_4_/number'
+url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B'
 headers =	{
 				'Accept':'application/json',
 				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4_', # change to your aei
+				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
 				'Content-Type':'application/vnd.onem2m-res+json; ty=3'
 			}
 a = quote_plus(result_chars)
