@@ -11,13 +11,12 @@ lists_A=[]
 lists_B=[]
 lists_H=[]
 def register_A(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A%s' %car)
-    headers =	{
-				'Accept':'application/json',
-				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-				'Content-Type':'application/vnd.onem2m-res+json; ty=4'
-			    }
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A/%s' %car)
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+    }
 
     data =	{
 			    "m2m:cin": {
@@ -34,19 +33,18 @@ def register_A(car):
 	    print('There was a problem: %s' % (exc))
 
 def register_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B%s' %car)
-    headers =	{
-				'Accept':'application/json',
-				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-				'Content-Type':'application/vnd.onem2m-res+json; ty=4'
-			    }
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B/%s' %car)
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+    }
 
     data =	{
-			    "m2m:cin": {
-				    "con": "B"
-			    }
-		    }
+        "m2m:cin": {
+            "con": "B"
+            }
+            }
 
     r = requests.post(url, headers=headers, json=data)
 
@@ -57,19 +55,19 @@ def register_B(car):
 	    print('There was a problem: %s' % (exc))
 
 def register_H(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap/%s' %car)
     headers =	{
-				'Accept':'application/json',
-				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-				'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=4'
 			    }
 
     data =	{
-			    "m2m:cin": {
-				    "con": "H"
-			    }
-		    }
+        "m2m:cin": {
+            "con": "H"
+            }
+            }
 
     r = requests.post(url, headers=headers, json=data)
 
@@ -81,41 +79,46 @@ def register_H(car):
 
 def find_dir():
     url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A?fu=2&la=5&ty=3&rcn=4'
-    headers = {'Accept':'application/json',
-			    'X-M2M-RI':'12345',
-			'   X-M2M-Origin':'SOrigin'}
+    headers ={'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'SOrigin'
+    }
 
     r = requests.get(url, headers=headers)
+
     try:
-	    r.raise_for_status()
+        r.raise_for_status()
         jr = r.json()
         for c in jr['m2m:rsp']['m2m:cnt']:
             lists_A.append(c['rn'])
     except Exception as exc:
-	    print('There was a problem: %s' % (exc))
+        print('There was a problem: %s' % (exc))
     
     url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B?fu=2&la=5&ty=3&rcn=4'
     headers = {'Accept':'application/json',
-			    'X-M2M-RI':'12345',
-			'   X-M2M-Origin':'SOrigin'}
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'SOrigin'
+    }
 
     r = requests.get(url, headers=headers)
+    
     try:
-	    r.raise_for_status()
+        r.raise_for_status()
         jr = r.json()
         for c in jr['m2m:rsp']['m2m:cnt']:
             lists_B.append(c['rn'])
     except Exception as exc:
-	    print('There was a problem: %s' % (exc))
+        print('There was a problem: %s' % (exc))
     
     url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap?fu=2&la=5&ty=3&rcn=4'
     headers = {'Accept':'application/json',
-			    'X-M2M-RI':'12345',
-			'   X-M2M-Origin':'SOrigin'}
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'SOrigin'
+    }
 
     r = requests.get(url, headers=headers)
     try:
-	    r.raise_for_status()
+        r.raise_for_status()
         jr = r.json()
         for c in jr['m2m:rsp']['m2m:cnt']:
             lists_H.append(c['rn'])
@@ -128,7 +131,7 @@ lists=[]
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('pjimg2.jpeg')
+img_ori = cv2.imread('B-1.jpeg')
 
 
 height, width, channel = img_ori.shape
@@ -439,8 +442,9 @@ plt.show()
 
 find_dir()
 a = quote_plus(result_chars)
+print(a)
 
-for i in range(len(lists)):
+for i in range(2):
     if lists_A[i] == a:
         register_A(a)
         break
@@ -450,7 +454,5 @@ for i in range(len(lists)):
     elif lists_H[i] == a:
         register_H(a)
         break
-    else:
-         print("There is No Car")
     
 
