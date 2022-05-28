@@ -7,6 +7,116 @@ import urllib
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+
+def register_A(car):
+    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A'
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+    }
+
+    data =	{
+        "m2m:cnt": {
+            "rn": car
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
+def register_B(car):
+    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B'
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+    }
+
+    data =	{
+        "m2m:cnt": {
+            "rn": car
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
+def register_H(car):
+    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap'
+    headers =	{
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+			    }
+
+    data =	{
+        "m2m:cnt": {
+            "rn": car
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
+def delete_car_A(car):
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/A/%s' %car)
+    headers =	{
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+        }
+        
+    payload= ""
+    response = requests.request("DELETE", url, headers=headers, data=payload)
+
+def delete_car_B(car):
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B/%s' %car)
+    headers =	{
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+        }
+        
+    payload= ""
+    response = requests.request("DELETE", url, headers=headers, data=payload)
+
+def delete_car_H(car):
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap/%s' %car)
+    headers =	{
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
+        }
+        
+    payload= ""
+    response = requests.request("DELETE", url, headers=headers, data=payload)
+
+
+
+
+
+lists=[]
+
 plt.style.use('dark_background')
 
 img_ori = cv2.imread('A-1.jpeg')
@@ -14,7 +124,7 @@ img_ori = cv2.imread('A-1.jpeg')
 
 height, width, channel = img_ori.shape
 plt.figure(figsize=(12, 10))
-plt.imshow(img_ori,cmap='gray') 
+plt.imshow(img_ori,cmap='gray')
 print(height, width, channel)
 
 
@@ -318,26 +428,31 @@ plt.figure(figsize=(12, 10))
 plt.imshow(img_out)
 plt.show()
 
+car = quote_plus(result_chars)
 
-url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/B'
-headers =	{
-				'Accept':'application/json',
-				'X-M2M-RI':'12345',
-				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-				'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-			}
-a = quote_plus(result_chars)
-print(a)
-data =	{
-			"m2m:cnt": {
-				"rn": "ABC"
-			}
-		}
 
-r = requests.post(url, headers=headers, json=data)
+# A=False
+# B=False
+# H=False
+# flag_A = False
+# flag_B = True
+# flag_H = False
 
-try:
-	r.raise_for_status()
-	print(r)
-except Exception as exc:
-	print('There was a problem: %s' % (exc))
+##A초음파, B초음파, H(handicap)초음파 있다고 가정
+##A 주차 완료 -> register_A(인수 car)
+##A초음파에서,차량 나감 -> delete_car_A(인수 car)
+##flag = 차량 나가고 들어오고 판별
+
+# if A:
+#     register_A(car)
+# elif B:
+#     register_B(car)
+# elif H:
+#     register_H(car)
+
+# if flag_A:
+#     delete_car_A(car)
+# elif flag_B:
+#     delete_car_B(car)
+# elif flag_H:
+#     delete_car_H(car)
