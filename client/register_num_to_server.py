@@ -9,7 +9,7 @@ from urllib.parse import unquote_plus
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('A-1.jpeg')
+img_ori = cv2.imread('handicap.png')
 
 
 height, width, channel = img_ori.shape
@@ -326,11 +326,11 @@ headers =	{
 				'X-M2M-Origin':'Ssch_platform_4', # change to your aei
 				'Content-Type':'application/vnd.onem2m-res+json; ty=3'
 			}
-a = quote_plus(result_chars)
+a = quote_plus(chars)
 print(a)
 data =	{
 			"m2m:cnt": {
-				"rn": "ABC"
+				"rn": a
 			}
 		}
 
