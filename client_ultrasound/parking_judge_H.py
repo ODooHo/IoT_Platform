@@ -11,29 +11,14 @@ from urllib.parse import unquote_plus
 
 GPIO.setmode(GPIO.BCM)
 # 초음파
-A_TRIG = 23 
-A_ECHO = 24
-B_TRIG = 27
-B_ECHO = 22
 H_TRIG = 19
 H_ECHO = 26
 
 # LED
-A_RED = 17
-A_GREEN = 18
-B_RED = 5
-B_GREEN = 6
 H_RED = 16
 H_GREEN = 20
 
-GPIO.setup(A_TRIG, GPIO.OUT)
-GPIO.setup(A_ECHO, GPIO.IN)
-GPIO.setup(A_RED, GPIO.OUT)
-GPIO.setup(A_GREEN, GPIO.OUT)
-GPIO.setup(B_TRIG, GPIO.OUT)
-GPIO.setup(B_ECHO, GPIO.IN)
-GPIO.setup(B_RED, GPIO.OUT)
-GPIO.setup(B_GREEN, GPIO.OUT)
+
 GPIO.setup(H_TRIG, GPIO.OUT)
 GPIO.setup(H_ECHO, GPIO.IN)
 GPIO.setup(H_RED, GPIO.OUT)
@@ -41,53 +26,8 @@ GPIO.setup(H_GREEN, GPIO.OUT)
 
 # CNT 여부 초기에 없다고 가정
 ACNT = False
-counter_A=0
-
-
-def register_A(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/A'
-    headers =	{'Accept':'application/json',
-    'X-M2M-RI':'12345',
-    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-    'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-    }
-
-    data =	{
-        "m2m:cnt": {
-            "rn": car
-            }
-            }
-
-    r = requests.post(url, headers=headers, json=data)
-
-    try:
-	    r.raise_for_status()
-	    print(r)
-    except Exception as exc:
-	    print('There was a problem: %s' % (exc))
-
-def register_B(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/B'
-    headers =	{'Accept':'application/json',
-    'X-M2M-RI':'12345',
-    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-    'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-    }
-
-    data =	{
-        "m2m:cnt": {
-            "rn": car
-            }
-            }
-
-    r = requests.post(url, headers=headers, json=data)
-
-    try:
-	    r.raise_for_status()
-	    print(r)
-    except Exception as exc:
-	    print('There was a problem: %s' % (exc))
-
+counter_H=0
+flag_H=False
 def register_H(car):
     url ='http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap'
     headers =	{
@@ -110,30 +50,7 @@ def register_H(car):
 	    print(r)
     except Exception as exc:
 	    print('There was a problem: %s' % (exc))
-
-def delete_car_A(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/A/%s' %car)
-    headers =	{
-        'Accept':'application/json',
-        'X-M2M-RI':'12345',
-        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-        }
-        
-    payload= ""
-    response = requests.request("DELETE", url, headers=headers, data=payload)
-
-def delete_car_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/B/%s' %car)
-    headers =	{
-        'Accept':'application/json',
-        'X-M2M-RI':'12345',
-        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-        }
-        
-    payload= ""
-    response = requests.request("DELETE", url, headers=headers, data=payload)
+ 
 
 def delete_car_H(car):
     url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap/%s' %car)
@@ -147,6 +64,22 @@ def delete_car_H(car):
     payload= ""
     response = requests.request("DELETE", url, headers=headers, data=payload)
 
+def check_handi(car):
+    global flag_H
+    url =('http://203.253.128.177:7579/Mobius/sch_platform_4/Car_list/Handicap/%s/la' %car)
+   
+    headers = {'Accept': 'application/json',
+    'X-M2M-RI': '12345',
+    'X-M2M-Origin': 'SOrigin'
+    }
+    
+    r = requests.get(url, headers=headers)
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+        flag_H = True
+        print('There was a problem: %s' % (exc))
 
 
 
@@ -155,7 +88,7 @@ lists=[]
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('B-2.jpeg')
+img_ori = cv2.imread('handicap.png')
 
 
 height, width, channel = img_ori.shape
@@ -466,81 +399,66 @@ plt.show()
 
 car = quote_plus(result_chars)
 
+check_handi(car)
+
+#if flag_H:
+    #경보 울림,(경고 조치) 함수 종료 
+print(flag_H)
 
 try : 
     while True :
-        GPIO.output(A_TRIG, False)
+        GPIO.output(H_TRIG, False)
         time.sleep(0.00001)
 
-        GPIO.output(A_TRIG, True)
+        GPIO.output(H_TRIG, True)
         time.sleep(0.00001)
-        GPIO.output(A_TRIG, False)
+        GPIO.output(H_TRIG, False)
 
         # Echo가 OFF 되는 시점을 시작 시간으로 잡기
-        while GPIO.input(A_ECHO) == 0: 
-            A_START = time.time()
+        while GPIO.input(H_ECHO) == 0: 
+            H_START = time.time()
 
         # Echo가 다시 ON이 되는 시점을 수신시간으로 잡기
-        while GPIO.input(A_ECHO) == 1:     
-            A_STOP = time.time()
-
+        while GPIO.input(H_ECHO) == 1:     
+            H_STOP = time.time()
+ 
         # 초음파가 수신되는 시간으로 거리 계산
-        A_T = A_STOP - A_START
-        A_L = A_T * 17000
-        A_L = round(A_L, 2)
+        H_T = H_STOP - H_START
+        H_L = H_T * 17000
+        H_L = round(H_L, 2)
 
         # 거리 오류
-        if (A_L >= 200 or A_L <= 0) :
+        if (H_L >= 200 or H_L <= 0) :
             print("-1")
 
         # 주차자리 있음 (초록불)
-        elif (A_L > 15 and A_L <= 40) :
+        elif (H_L > 15 and H_L <= 40) :
             #print('Distance is ', L, ' cm')
-            GPIO.output(A_RED, GPIO.LOW)
-            GPIO.output(A_GREEN, GPIO.HIGH)
+            GPIO.output(H_RED, GPIO.LOW)
+            GPIO.output(H_GREEN, GPIO.HIGH)
             if ACNT == True:
-                delete_car_A(car)
+                delete_car_H(car)
                 ACNT = False
 
 
         # 주차자리 없음 (빨간불)
-        elif (A_L <= 15) :
-            counter_A+=1
+        elif (H_L <= 15) :
+            counter_H+=1
             #print('Distance is ', L, ' cm')
-            if ACNT == False and counter_A==100:
-                GPIO.output(A_RED, GPIO.HIGH)
-                GPIO.output(A_GREEN, GPIO.LOW)
-                register_A(car)
+            if ACNT == False and counter_H==100:
+                GPIO.output(H_RED, GPIO.HIGH)
+                GPIO.output(H_GREEN, GPIO.LOW)
+                register_H(car)
                 ACNT = True
-                counter_A=0
+                counter_H=0
 
         time.sleep(0.1)
         
 except KeyboardInterrupt:
     GPIO.cleanup()
 
-A=False
-B=False
-H=False
-flag_A = False
-flag_B = True
-flag_H = False
 
 ##A초음파, B초음파, H(handicap)초음파 있다고 가정
 ##A 주차 완료 -> register_A(인수 car)
 ##A초음파에서,차량 나감 -> delete_car_A(인수 car)
 ##flag = 차량 나가고 들어오고 판별
-
-# if A:
-#     register_A(car)
-# elif B:
-#     register_B(car)
-# elif H:
-#     register_H(car)
-
-# if flag_A:
-#     delete_car_A(car)
-# elif flag_B:
-#     delete_car_B(car)
-# elif flag_H:
-#     delete_car_H(car)

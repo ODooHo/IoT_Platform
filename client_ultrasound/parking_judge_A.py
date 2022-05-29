@@ -13,32 +13,14 @@ GPIO.setmode(GPIO.BCM)
 # 초음파
 A_TRIG = 23 
 A_ECHO = 24
-B_TRIG = 27
-B_ECHO = 22
-H_TRIG = 19
-H_ECHO = 26
-
 # LED
 A_RED = 17
 A_GREEN = 18
-B_RED = 5
-B_GREEN = 6
-H_RED = 16
-H_GREEN = 20
 
 GPIO.setup(A_TRIG, GPIO.OUT)
 GPIO.setup(A_ECHO, GPIO.IN)
 GPIO.setup(A_RED, GPIO.OUT)
 GPIO.setup(A_GREEN, GPIO.OUT)
-GPIO.setup(B_TRIG, GPIO.OUT)
-GPIO.setup(B_ECHO, GPIO.IN)
-GPIO.setup(B_RED, GPIO.OUT)
-GPIO.setup(B_GREEN, GPIO.OUT)
-GPIO.setup(H_TRIG, GPIO.OUT)
-GPIO.setup(H_ECHO, GPIO.IN)
-GPIO.setup(H_RED, GPIO.OUT)
-GPIO.setup(H_GREEN, GPIO.OUT)
-
 # CNT 여부 초기에 없다고 가정
 ACNT = False
 counter_A=0
@@ -66,50 +48,6 @@ def register_A(car):
     except Exception as exc:
 	    print('There was a problem: %s' % (exc))
 
-def register_B(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/B'
-    headers =	{'Accept':'application/json',
-    'X-M2M-RI':'12345',
-    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-    'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-    }
-
-    data =	{
-        "m2m:cnt": {
-            "rn": car
-            }
-            }
-
-    r = requests.post(url, headers=headers, json=data)
-
-    try:
-	    r.raise_for_status()
-	    print(r)
-    except Exception as exc:
-	    print('There was a problem: %s' % (exc))
-
-def register_H(car):
-    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap'
-    headers =	{
-        'Accept':'application/json',
-        'X-M2M-RI':'12345',
-        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-			    }
-
-    data =	{
-        "m2m:cnt": {
-            "rn": car
-            }
-            }
-
-    r = requests.post(url, headers=headers, json=data)
-
-    try:
-	    r.raise_for_status()
-	    print(r)
-    except Exception as exc:
-	    print('There was a problem: %s' % (exc))
 
 def delete_car_A(car):
     url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/A/%s' %car)
@@ -123,32 +61,7 @@ def delete_car_A(car):
     payload= ""
     response = requests.request("DELETE", url, headers=headers, data=payload)
 
-def delete_car_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/B/%s' %car)
-    headers =	{
-        'Accept':'application/json',
-        'X-M2M-RI':'12345',
-        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-        }
         
-    payload= ""
-    response = requests.request("DELETE", url, headers=headers, data=payload)
-
-def delete_car_H(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap/%s' %car)
-    headers =	{
-        'Accept':'application/json',
-        'X-M2M-RI':'12345',
-        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
-        'Content-Type':'application/vnd.onem2m-res+json; ty=3'
-        }
-        
-    payload= ""
-    response = requests.request("DELETE", url, headers=headers, data=payload)
-
-
-
 
 
 lists=[]
@@ -519,28 +432,8 @@ try :
 except KeyboardInterrupt:
     GPIO.cleanup()
 
-A=False
-B=False
-H=False
-flag_A = False
-flag_B = True
-flag_H = False
 
 ##A초음파, B초음파, H(handicap)초음파 있다고 가정
 ##A 주차 완료 -> register_A(인수 car)
 ##A초음파에서,차량 나감 -> delete_car_A(인수 car)
 ##flag = 차량 나가고 들어오고 판별
-
-# if A:
-#     register_A(car)
-# elif B:
-#     register_B(car)
-# elif H:
-#     register_H(car)
-
-# if flag_A:
-#     delete_car_A(car)
-# elif flag_B:
-#     delete_car_B(car)
-# elif flag_H:
-#     delete_car_H(car)
