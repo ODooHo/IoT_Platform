@@ -403,15 +403,6 @@ plt.show()
 
 car = quote_plus(result_chars)
 
-check_handi(car)
-
-if flag_H:
-    pygame.mixer.init()
-    pygame.mixer.music.load("warn.wav")
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy()==True:
-        continue
-    sys.exit()
 try : 
     while True :
         GPIO.output(H_TRIG, False)
@@ -453,6 +444,14 @@ try :
             counter_H+=1
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_H==100:
+                check_handi(car)
+                if flag_H:                   
+                    pygame.mixer.init()
+                    pygame.mixer.music.load("warn.wav")
+                    pygame.mixer.music.play()
+                    while pygame.mixer.music.get_busy()==True:
+                        continue
+                    sys.exit()
                 GPIO.output(H_RED, GPIO.HIGH)
                 GPIO.output(H_GREEN, GPIO.LOW)
                 register_H(car)
