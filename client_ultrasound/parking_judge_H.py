@@ -451,6 +451,7 @@ try :
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy()==True:
                         continue
+                    GPIO.cleanup()
                     sys.exit()
                 GPIO.output(H_RED, GPIO.HIGH)
                 GPIO.output(H_GREEN, GPIO.LOW)
