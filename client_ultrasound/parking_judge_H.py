@@ -1,4 +1,5 @@
 import cv2
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import pytesseract
@@ -6,8 +7,11 @@ import requests
 import urllib
 import RPi.GPIO as GPIO
 import time
+import pygame
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
+
+
 
 GPIO.setmode(GPIO.BCM)
 # 초음파
@@ -88,7 +92,7 @@ lists=[]
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('handicap.png')
+img_ori = cv2.imread('A-1.jpeg')
 
 
 height, width, channel = img_ori.shape
@@ -401,10 +405,13 @@ car = quote_plus(result_chars)
 
 check_handi(car)
 
-#if flag_H:
-    #경보 울림,(경고 조치) 함수 종료 
-print(flag_H)
-
+if flag_H:
+    pygame.mixer.init()
+    pygame.mixer.music.load("warn.wav")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy()==True:
+        continue
+    sys.exit()
 try : 
     while True :
         GPIO.output(H_TRIG, False)
