@@ -37,9 +37,9 @@ def setServoPos(degree):
 if __name__ == "__main__":  
   # 서보 0도에 위치
   setServoPos(120)
-  sleep(5) # 1초 대기
+  sleep(6) # 1초 대기
 
-  setServoPos(90)
+  setServoPos(85)
   sleep(5) # 1초 대기
   servo.stop()
   # GPIO 모드 초기화

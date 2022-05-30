@@ -35,7 +35,7 @@ def setServoPos(degree):
 
 
 if __name__ == "__main__":  
-  setServoPos(90)
+  setServoPos(85)
   sleep(1)
 
   # 서보 PWM 정지
