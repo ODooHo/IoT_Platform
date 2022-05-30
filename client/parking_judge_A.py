@@ -27,7 +27,7 @@ counter_A=0
 
 
 def register_A(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/A'
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status')
     headers =	{'Accept':'application/json',
     'X-M2M-RI':'12345',
     'X-M2M-Origin':'Ssch_platform_4', # change to your aei
@@ -48,9 +48,30 @@ def register_A(car):
     except Exception as exc:
 	    print('There was a problem: %s' % (exc))
 
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+    }
+
+    data =	{
+        "m2m:cin": {
+            "con": "A"
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
 
 def delete_car_A(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/A/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -68,7 +89,7 @@ lists=[]
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('B-2.jpeg')
+img_ori = cv2.imread('A-1.jpeg')
 
 
 height, width, channel = img_ori.shape
@@ -411,14 +432,15 @@ try :
             #print('Distance is ', L, ' cm')
             GPIO.output(A_RED, GPIO.LOW)
             GPIO.output(A_GREEN, GPIO.HIGH)
+            if counter_A>150:
+                counter_A = 0
             if ACNT == True:
                 delete_car_A(car)
                 ACNT = False
 
-
         # 주차자리 없음 (빨간불)
         elif (A_L <= 15) :
-            counter_A+=1
+            counter_A+=2
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_A==100:
                 GPIO.output(A_RED, GPIO.HIGH)
