@@ -432,7 +432,7 @@ try :
             #print('Distance is ', L, ' cm')
             GPIO.output(A_RED, GPIO.LOW)
             GPIO.output(A_GREEN, GPIO.HIGH)
-            if counter_A>150:
+            if counter_A>200:
                 counter_A = 0
             if ACNT == True:
                 delete_car_A(car)

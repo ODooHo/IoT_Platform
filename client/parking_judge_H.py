@@ -452,18 +452,18 @@ try :
             print("-1")
 
         # 주차자리 있음 (초록불)
-        elif (H_L > 15 and H_L <= 40) :
+        elif (H_L > 20 and H_L <= 80) :
             #print('Distance is ', L, ' cm')
-            GPIO.output(H_RED, GPIO.LOW)
-            GPIO.output(H_GREEN, GPIO.HIGH)
+            GPIO.output(H_RED, GPIO.HIGH)
+            GPIO.output(H_GREEN, GPIO.LOW)
             if ACNT == True:
                 delete_car_H(car)
                 ACNT = False
 
 
         # 주차자리 없음 (빨간불)
-        elif (H_L <= 15) :
-            counter_H+=1
+        elif (H_L <= 20) :
+            counter_H+=4
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_H==100:
                 check_handi(car)
@@ -473,10 +473,10 @@ try :
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy()==True:
                         continue
+                    GPIO.output(H_RED, GPIO.LOW)
+                    GPIO.output(H_GREEN, GPIO.HIGH)
                     GPIO.cleanup()
                     sys.exit()
-                GPIO.output(H_RED, GPIO.HIGH)
-                GPIO.output(H_GREEN, GPIO.LOW)
                 register_H(car)
                 ACNT = True
                 counter_H=0

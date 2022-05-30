@@ -77,7 +77,7 @@ def register_B(car):
 
 
 def delete_car_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/B/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -405,7 +405,6 @@ plt.show()
 
 car = quote_plus(result_chars)
 
-
 try : 
     while True :
         GPIO.output(B_TRIG, False)
@@ -433,18 +432,20 @@ try :
             print("-1")
 
         # 주차자리 있음 (초록불)
-        elif (B_L > 15 and B_L <= 40) :
+        elif (B_L > 20 and B_L <= 80) :
             #print('Distance is ', L, ' cm')
             GPIO.output(B_RED, GPIO.LOW)
             GPIO.output(B_GREEN, GPIO.HIGH)
+            if counter_B>200:
+                counter_B=0
             if ACNT == True:
                 delete_car_B(car)
                 ACNT = False
 
 
         # 주차자리 없음 (빨간불)
-        elif (B_L <= 15) :
-            counter_B+=1
+        elif (B_L <= 20) :
+            counter_B+=2
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_B==100:
                 GPIO.output(B_RED, GPIO.HIGH)
