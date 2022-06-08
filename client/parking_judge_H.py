@@ -33,7 +33,7 @@ ACNT = False
 counter_H=0
 flag_H=False
 def register_H(car):
-    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap'
+    url ='http://203.253.128.177:7579/Mobius/sch_platform_4/status'
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -54,7 +54,29 @@ def register_H(car):
 	    print(r)
     except Exception as exc:
 	    print('There was a problem: %s' % (exc))
- 
+  
+    url =('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
+    headers =	{
+        'Accept':'application/json',
+        'X-M2M-RI':'12345',
+        'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+        'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+			    }
+
+    data =	{
+        "m2m:cin": {
+            "con": "H"
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
 
 def delete_car_H(car):
     url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/Handicap/%s' %car)
@@ -430,18 +452,18 @@ try :
             print("-1")
 
         # 주차자리 있음 (초록불)
-        elif (H_L > 15 and H_L <= 40) :
+        elif (H_L > 20 and H_L <= 80) :
             #print('Distance is ', L, ' cm')
-            GPIO.output(H_RED, GPIO.LOW)
-            GPIO.output(H_GREEN, GPIO.HIGH)
+            GPIO.output(H_RED, GPIO.HIGH)
+            GPIO.output(H_GREEN, GPIO.LOW)
             if ACNT == True:
                 delete_car_H(car)
                 ACNT = False
 
 
         # 주차자리 없음 (빨간불)
-        elif (H_L <= 15) :
-            counter_H+=1
+        elif (H_L <= 20) :
+            counter_H+=4
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_H==100:
                 check_handi(car)
@@ -451,10 +473,10 @@ try :
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy()==True:
                         continue
+                    GPIO.output(H_RED, GPIO.LOW)
+                    GPIO.output(H_GREEN, GPIO.HIGH)
                     GPIO.cleanup()
                     sys.exit()
-                GPIO.output(H_RED, GPIO.HIGH)
-                GPIO.output(H_GREEN, GPIO.LOW)
                 register_H(car)
                 ACNT = True
                 counter_H=0

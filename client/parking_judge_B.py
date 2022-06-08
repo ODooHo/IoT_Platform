@@ -33,7 +33,7 @@ counter_B=0
 
 
 def register_B(car):
-    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status/B'
+    url = 'http://203.253.128.177:7579/Mobius/sch_platform_4/status'
     headers =	{'Accept':'application/json',
     'X-M2M-RI':'12345',
     'X-M2M-Origin':'Ssch_platform_4', # change to your aei
@@ -53,9 +53,31 @@ def register_B(car):
 	    print(r)
     except Exception as exc:
 	    print('There was a problem: %s' % (exc))
+    
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
+    headers =	{'Accept':'application/json',
+    'X-M2M-RI':'12345',
+    'X-M2M-Origin':'Ssch_platform_4', # change to your aei
+    'Content-Type':'application/vnd.onem2m-res+json; ty=4'
+    }
+
+    data =	{
+        "m2m:cin": {
+            "con": "B"
+            }
+            }
+
+    r = requests.post(url, headers=headers, json=data)
+
+    try:
+	    r.raise_for_status()
+	    print(r)
+    except Exception as exc:
+	    print('There was a problem: %s' % (exc))
+
 
 def delete_car_B(car):
-    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/B/%s' %car)
+    url = ('http://203.253.128.177:7579/Mobius/sch_platform_4/status/%s' %car)
     headers =	{
         'Accept':'application/json',
         'X-M2M-RI':'12345',
@@ -383,7 +405,6 @@ plt.show()
 
 car = quote_plus(result_chars)
 
-
 try : 
     while True :
         GPIO.output(B_TRIG, False)
@@ -411,18 +432,20 @@ try :
             print("-1")
 
         # 주차자리 있음 (초록불)
-        elif (B_L > 15 and B_L <= 40) :
+        elif (B_L > 20 and B_L <= 80) :
             #print('Distance is ', L, ' cm')
             GPIO.output(B_RED, GPIO.LOW)
             GPIO.output(B_GREEN, GPIO.HIGH)
+            if counter_B>200:
+                counter_B=0
             if ACNT == True:
                 delete_car_B(car)
                 ACNT = False
 
 
         # 주차자리 없음 (빨간불)
-        elif (B_L <= 15) :
-            counter_B+=1
+        elif (B_L <= 20) :
+            counter_B+=2
             #print('Distance is ', L, ' cm')
             if ACNT == False and counter_B==100:
                 GPIO.output(B_RED, GPIO.HIGH)
