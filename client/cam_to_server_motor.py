@@ -62,7 +62,7 @@ def make_Carlist():
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('A-1.jpeg')
+img_ori = cv2.imread('B-1.jpeg')
 
 height, width, channel = img_ori.shape
 plt.figure(figsize=(12, 10))
